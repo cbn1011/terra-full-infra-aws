@@ -1,27 +1,26 @@
 variable "region"{
-	default     = "us-east-1"
+	default     = "me-central-1"
 	description = "Default Region"
 }
 variable "vpcidr" {
-	default     = "190.160.0.0/16"
+	default     = "172.16.0.0/16"
 	description = "Cidr value for the VPC"
 }
 #For Private Subnets
 variable "subcidr-priv" {
 	type        = list
-	default     = ["190.160.1.0/24","190.160.2.0/24","190.160.3.0/24"]
+	default     = ["172.16.32.0/19","172.16.64.0/19","172.16.96.0/19"]
 	description = "Cidr value for subnets"
 	sensitive   = true
 }
 #For pub subnet
 variable "subcidr-pub" {
     type        = list
-	default     = ["190.160.4.0/24","190.160.5.0/24","190.160.6.0/24"]
+	default     = ["172.16.128.0/19","172.16.160.0/19","172.16.192.0/19"]
 	description = "Cidr value for subnets"
 }
 data "aws_availability_zones" "az" {}
 variable "project" {
     type        = string
-    default     = "MyProject"
+    default     = "Bestdoc-Uae"
 }
-
