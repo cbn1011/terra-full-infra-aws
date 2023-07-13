@@ -1,5 +1,5 @@
 provider "aws" {
-    region = "us-east-1"
+    region = var.region
   
 }
 resource "aws_vpc" "main" {
@@ -7,7 +7,7 @@ resource "aws_vpc" "main" {
 	instance_tenancy = "default"
 
 	tags = {
-		Name = "MyVPC"
+		Name = "${var.project}-MyVPC."
 	}
 }
 resource "aws_subnet" "priv-subnets" {
@@ -18,6 +18,7 @@ resource "aws_subnet" "priv-subnets" {
 
 		tags = {
 		Name = "${var.project}Private-Sub-${count.index}"
+		Tier = "Private"
 }
 }
 resource "aws_subnet" "pub-subnets" {
@@ -28,6 +29,7 @@ resource "aws_subnet" "pub-subnets" {
 
 		tags = {
 		Name = "${var.project}-Public-Sub-${count.index}"
+		TIer = "Public"
 }
 }
 resource "aws_eip" "eip" {
@@ -49,14 +51,12 @@ resource "aws_nat_gateway" "NAT" {
 	  Name = "${var.project}-NAT"
 	}
 }
+
 module "Route_table" {
   source = "../route-table-block"
   vpcid = aws_vpc.main.id
   gateway = aws_internet_gateway.IG.id
   gateway-priv = aws_nat_gateway.NAT.id
-  count = length(aws_subnet.pub-subnets)
-  
-  subnet_association-priv = aws_subnet.priv-subnets[0].id
-  subnet_association-pub = aws_subnet.pub-subnets[0].id
-
+  subnet_association-priv = aws_subnet.priv-subnets[*].id
+  subnet_association-pub = aws_subnet.pub-subnets[*].id
 }
